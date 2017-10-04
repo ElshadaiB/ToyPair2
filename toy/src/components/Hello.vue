@@ -9,7 +9,13 @@
           <label>Password：</label>
           <input type="password" v-model="password" placeholder="Password" name="password">
         </div>
-        <button @click="submitForm()">submit</button>
+        <div>
+          <button @click="submitForm()">submit</button>
+        </div>
+        <div>
+          <h3>{{hooray}}</h3>
+        </div>
+
     </div>
   </div>
 </template>
@@ -20,7 +26,8 @@
     data () {
       return {
         username: '',
-        password: ''
+        password: '',
+        hooray: ''
       }
     },
     methods: {
@@ -28,7 +35,7 @@
         this.$http.get('/v1/reg').then((response) => {
           response = response.body
           if (response.errno === 0) {
-            console.log(response)
+            this.hooray = 'Sucessfully Registered!'
           }
         })
       }
