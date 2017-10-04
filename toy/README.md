@@ -23,5 +23,7 @@ npm run unit
 # run all tests
 npm test
 ```
+# to test with eslint
+node_modules/.bin/eslint target.js
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
