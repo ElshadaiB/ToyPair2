@@ -4,7 +4,7 @@ var config = require('../config')
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
 }
-
+var bodyParser = require('body-parser')
 var opn = require('opn')
 var path = require('path')
 var express = require('express')
@@ -22,16 +22,60 @@ var autoOpenBrowser = !!config.dev.autoOpenBrowser
 // https://github.com/chimurai/http-proxy-middleware
 var proxyTable = config.dev.proxyTable
 
-var app = express()
+//var mongo = require('mongodb');
+//var monk = require('monk');
+//var db =  monk('localhost:27017/toy');
+
+
+
+var app = express();
 var apiRoutes = express.Router();
 
-apiRoutes.get('/reg', function (req, res) {
-  res.json({
-    errno: 0,
-    data: 'welldone'
-  });
-});
 app.use('/v1', apiRoutes);
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+apiRoutes.all('/reg', bodyParser.json({extended: true}), function (req, res) {
+
+  var MongoClient = require('mongodb').MongoClient
+    , assert = require('assert');
+// Connection URL
+  var url = 'mongodb://localhost:27017/toy';
+// Use connect method to connect to the Server
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+    db.collection('usercollection').insert(
+      {
+        "username" : req.body.username,
+        "password" : req.body.password
+      }, function (err, doc) {
+        if (err) {
+          // If it failed, return error
+          res.json({
+            errno: 1,
+            data: 'welldone'
+          });
+        }
+        else {
+          // And forward to success page
+
+          res.json({
+            errno: 0,
+            data: 'welldone'
+          });
+        }
+      });
+
+    db.close();
+  });
+
+
+
+
+});
+
 var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
